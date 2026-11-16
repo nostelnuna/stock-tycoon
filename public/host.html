@@ -69,7 +69,7 @@
   <script>
     const socket = io();
     let hostToken = localStorage.getItem('st_host_token') || null;
-    let selectedRounds = 5;
+    let selectedRounds = 16;
     let ttsEnabled = true;
     let lastSpokenKey = null;
 
@@ -180,7 +180,7 @@
       if (st.phase === 'LOBBY') {
         toolbar.innerHTML = `
           <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-700">
-            ${[4, 5, 6].map((r) => `
+            ${[8, 12, 16].map((r) => `
               <button onclick="setRounds(${r})" class="px-3 py-1.5 rounded-lg text-xs font-bold ${selectedRounds === r ? 'bg-emerald-500 text-slate-950' : 'text-slate-300'}">${r}R</button>
             `).join('')}
           </div>
@@ -286,7 +286,7 @@
                   <div class="text-base font-extrabold text-white">${s.emoji} ${s.name}</div>
                   <div class="flex items-baseline justify-between pt-1">
                     <span class="font-mono text-lg font-black text-amber-300">${s.price.toLocaleString()}원</span>
-                    <span class="font-mono text-sm font-bold ${color}">${arrow} ${up ? '+' : ''}${s.pctChange}%</span>
+                    <span class="font-mono text-sm font-bold ${color}">${arrow} ${up ? '+' : ''}${s.pctChange}% ${s.limitTag ? `<span class="ml-1 px-1.5 py-0.5 rounded text-[10px] ${s.limitTag === '상한가' ? 'bg-rose-500/30 text-rose-300' : 'bg-sky-500/30 text-sky-300'}">${s.limitTag}</span>` : ''}</span>
                   </div>
                 </div>
               `;
@@ -296,14 +296,10 @@
 
         ${st.phase === 'TRADING' ? `
           <div class="panel rounded-3xl p-6 space-y-3">
-            <h2 class="text-lg font-bold text-amber-300">📰 ${st.round}라운드 업종 · 테마 · 실적 브리핑</h2>
+            <h2 class="text-lg font-bold text-amber-300">📰 ${st.round}라운드 시장 브리핑 (6개 정보)</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               ${st.briefings.map((b) => `
                 <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-1.5">
-                  <div class="flex items-center justify-between text-xs">
-                    <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">${escapeHtml(b.category)}</span>
-                    <span class="text-slate-400 font-semibold">${escapeHtml(b.sector)}</span>
-                  </div>
                   <div class="font-bold text-sm text-white">${escapeHtml(b.title)}</div>
                   <p class="text-xs text-slate-300 leading-relaxed">${escapeHtml(b.summary)}</p>
                 </div>

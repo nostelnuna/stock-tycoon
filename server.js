@@ -13,7 +13,7 @@ const io = new Server(server, {
 });
 
 const PORT = process.env.PORT || 3000;
-const ADMIN_PIN = process.env.ADMIN_PIN || '6208';
+const ADMIN_PIN = process.env.ADMIN_PIN || '2146';
 const STARTING_CASH = 1000000; // 100만 원
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -137,170 +137,269 @@ const STOCK_CATALOG = [
 ];
 
 // ---------------------------------------------------------------------------
-// 라운드별 업종·테마·매출·실적·리스크 시나리오 덱 (20종)
+// 라운드별 시황 브리핑 덱 (32종)
+// - EASY: 직관적 정보 (±10% 이내 소폭 변동)
+// - HARD: 거시·밸류체인·원가·선반영 등 복합 추론 필요 (±10% ~ ±30% 고변동)
 // ---------------------------------------------------------------------------
 const MARKET_NEWS_DECK = [
+  // --- EASY (±10% 이내) ---
   {
-    id: 'N01',
-    category: '실적·매출',
-    sector: '반도체',
-    title: 'AI 데이터센터 증설 경쟁… 메모리 판가 25% 급등',
-    summary: '한빛반도체 3분기 영업이익이 컨센서스를 40% 상회할 전망. HBM 물량 내년 상반기까지 완판.',
-    impacts: { SEMI: 0.24, FINC: 0.02 },
-    outcomeNote: 'AI 메모리 실적 서프라이즈로 한빛반도체가 강하게 상승했습니다.',
+    id: 'E01',
+    difficulty: 'EASY',
+    title: '국내 주요 편의점·마트 3분기 객단가 소폭 상승',
+    summary: '가공식품 및 간편식 수요가 꾸준히 이어지며 데일리푸드 매출이 전년 동기 대비 4%대 완만한 증가세를 기록했습니다.',
+    impacts: { CONS: 0.06 },
+    outcomeNote: '내수 식음료 수요 유지로 데일리푸드가 소폭 상승했습니다.',
   },
   {
-    id: 'N02',
-    category: '리스크 경보',
-    sector: '반도체',
-    title: '주요국 첨단 반도체 장비 수출 규제 강화 검토',
-    summary: '핵심 공정 장비 반입 지연 및 재고 조정 우려가 부각되며 단기 마진 압박 리스크 확대.',
-    impacts: { SEMI: -0.20, AUTO: -0.04, FINC: 0.03 },
-    outcomeNote: '수출 규제 리스크로 한빛반도체에서 차익 실현 매물이 쏟아졌습니다.',
+    id: 'E02',
+    difficulty: 'EASY',
+    title: '주요 시중은행 가계대출 연체율 안정세 유지',
+    summary: '세이프금융의 대손충당금 적립 부담이 시장 예상치에 부합하며 안정적인 분기 실적이 전망됩니다.',
+    impacts: { FINC: 0.05 },
+    outcomeNote: '건전성 지표 안정으로 세이프금융이 완만히 올랐습니다.',
   },
   {
-    id: 'N03',
-    category: '업종 전망',
-    sector: '자동차 · 철강',
-    title: '북미·유럽 하이브리드 차량 판매량 역대 최고치 경신',
-    summary: '태극모터스 북미 점유율 12% 돌파 및 영업이익률 10%대 회복. 차체용 강판 수요도 동반 증가.',
-    impacts: { AUTO: 0.21, STEL: 0.11 },
-    outcomeNote: '글로벌 완성차 호조에 힘입어 태극모터스와 대한철강이 동반 상승했습니다.',
+    id: 'E03',
+    difficulty: 'EASY',
+    title: '신차 출시 대기 수요 일부 이연… 내수 출하량 보합',
+    summary: '태극모터스 페이스리프트 모델 대기 수요로 단기 국내 판매가 주춤했으나, 해외 판매가 이를 상쇄하고 있습니다.',
+    impacts: { AUTO: -0.04 },
+    outcomeNote: '단기 출하량 둔화로 태극모터스가 소폭 하락했습니다.',
   },
   {
-    id: 'N04',
-    category: '리스크 경보',
-    sector: '자동차',
-    title: '수입산 자동차 관세 인상 및 현지 노조 파업 장기화',
-    summary: '북미 수출 물량에 15% 추가 관세 부과 논의 및 국내 공장 가동률 하락으로 4분기 매출 타격 우려.',
-    impacts: { AUTO: -0.19, STEL: -0.07 },
-    outcomeNote: '관세·파업 리스크로 태극모터스가 약세를 면치 못했습니다.',
+    id: 'E04',
+    difficulty: 'EASY',
+    title: '면세점 K-뷰티 팝업스토어 방문객 증가',
+    summary: '주말 관광객 유입에 힘입어 루나코스메틱 주요 매장 매출이 전주 대비 소폭 개선되었습니다.',
+    impacts: { COSM: 0.07 },
+    outcomeNote: '오프라인 매장 매출 개선으로 루나코스메틱이 소폭 상승했습니다.',
   },
   {
-    id: 'N05',
-    category: '거시·유가',
-    sector: '항공 · 석유화학',
-    title: '중동 지정학적 불안으로 국제 유가 배럴당 95달러 돌파',
-    summary: '항공유 및 나프타 원가 급등으로 스카이항공과 넥스트케미칼의 수익성 악화 직격탄 우려.',
-    impacts: { AIRL: -0.21, CHEM: -0.17, CNST: 0.06 },
-    outcomeNote: '국제 유가 급등 여파로 항공과 석유화학 업종이 동반 하락했습니다.',
+    id: 'E05',
+    difficulty: 'EASY',
+    title: '유럽향 철강 쿼터 소진 임박… 단기 선적 속도 조절',
+    summary: '대한철강의 분기 수출 물량 일부가 다음 분기로 이월되면서 단기 매출 인식이 소폭 지연될 전망입니다.',
+    impacts: { STEL: -0.06 },
+    outcomeNote: '수출 물량 이월로 대한철강이 소폭 하락했습니다.',
   },
   {
-    id: 'N06',
-    category: '거시·유가',
-    sector: '항공 · 석유화학',
-    title: '산유국 증산 합의… 국제 유가 70달러 선 급락',
-    summary: '유류비 부담 대폭 완화와 여름철 해외여행 예약률 140% 급증. 석유화학 스프레드도 동반 개선 전망.',
-    impacts: { AIRL: 0.24, CHEM: 0.16, COSM: 0.08 },
-    outcomeNote: '유가 하락과 여객 수요 폭증으로 항공·화학·면세 화장품이 동반 랠리를 펼쳤습니다.',
+    id: 'E06',
+    difficulty: 'EASY',
+    title: '국내 주요 공항 국제선 여객 수 전월 대비 5% 증가',
+    summary: '단거리 노선 탑승률이 견조하게 유지되며 스카이항공의 비수기 방어력이 확인되었습니다.',
+    impacts: { AIRL: 0.06 },
+    outcomeNote: '단거리 여객 호조로 스카이항공이 소폭 상승했습니다.',
   },
   {
-    id: 'N07',
-    category: '테마·수출',
-    sector: '화장품 · 소비재',
-    title: 'K-뷰티 북미·일본 온라인 몰 매출 전년 대비 +65% 폭증',
-    summary: '루나코스메틱 주력 앰플이 아마존 뷰티 1위 달성. 외국인 관광객 입국 증가로 면세·유통 소비재도 수혜.',
-    impacts: { COSM: 0.26, CONS: 0.10, AIRL: 0.06 },
-    outcomeNote: '글로벌 K-뷰티 열풍으로 루나코스메틱이 급등했습니다.',
+    id: 'E07',
+    difficulty: 'EASY',
+    title: '글로벌 PC·모바일 메모리 재고 소진 속도 둔화',
+    summary: '레거시 제품군 수요가 예상보다 더뎌 한빛반도체의 단기 가격 협상력이 다소 약화되었습니다.',
+    impacts: { SEMI: -0.07 },
+    outcomeNote: '레거시 메모리 수요 둔화로 한빛반도체가 소폭 하락했습니다.',
   },
   {
-    id: 'N08',
-    category: '리스크 경보',
-    sector: '화장품 · 소비재',
-    title: '해외 플랫폼 수수료 인상 및 현지 규제(위생허가) 강화',
-    summary: '루나코스메틱 마케팅 비용 급증으로 영업이익률 하락 우려. 내수 소비 위축으로 소비재 판매도 둔화.',
-    impacts: { COSM: -0.21, CONS: -0.09 },
-    outcomeNote: '마케팅 비용 부담과 규제 우려로 화장품·소비재가 조정을 받았습니다.',
+    id: 'E08',
+    difficulty: 'EASY',
+    title: '에코건설, 수도권 소규모 정비사업 시공사 선정',
+    summary: '공사비 약 1,800억 원 규모의 도급 계약을 체결하며 안정적인 일감을 확보했습니다.',
+    impacts: { CNST: 0.07 },
+    outcomeNote: '소규모 정비사업 수주로 에코건설이 소폭 상승했습니다.',
   },
   {
-    id: 'N09',
-    category: '거시·금리',
-    sector: '건설 · 금융 · 바이오',
-    title: '중앙은행 기준금리 0.5%p 전격 인하 발표',
-    summary: '조달 금리 하락으로 건설(PF 부담 완화)과 바이오(성장주 할인율 축소) 급반등 기대. 반면 금융주는 예대마진 축소 우려.',
-    impacts: { CNST: 0.22, BIOH: 0.18, SEMI: 0.10, FINC: -0.07 },
-    outcomeNote: '금리 인하 수혜로 건설·바이오·반도체가 강세를 보였고 금융주는 소폭 하락했습니다.',
+    id: 'E09',
+    difficulty: 'EASY',
+    title: '넥스바이오, 건강기능식품 자회사 실적 개선',
+    summary: '본업 외 건기식 부문 매출이 8% 늘며 연구개발비 부담을 일부 완화했습니다.',
+    impacts: { BIOH: 0.06 },
+    outcomeNote: '자회사 실적 개선으로 넥스바이오가 소폭 상승했습니다.',
   },
   {
-    id: 'N10',
-    category: '거시·금리',
-    sector: '금융 · 건설',
-    title: '인플레이션 재점화… 고금리 장기화 및 부동산 PF 부실 경보',
-    summary: '건설사 미분양 증가 및 자금 경색 리스크 부각. 반면 세이프금융은 견조한 이자수익과 자사주 소각으로 방어.',
-    impacts: { CNST: -0.24, STEL: -0.10, FINC: 0.11, CONS: 0.05 },
-    outcomeNote: '고금리·PF 리스크로 건설·철강이 하락한 반면 금융과 필수소비재가 방어력을 입증했습니다.',
+    id: 'E10',
+    difficulty: 'EASY',
+    title: '기초 화학제품 정기보수(셧다운)로 가동률 일시 하락',
+    summary: '넥스트케미칼 여수 공장 정기보수 일정에 따라 이번 달 출하량이 소폭 감소할 예정입니다.',
+    impacts: { CHEM: -0.06 },
+    outcomeNote: '정기보수 영향으로 넥스트케미칼이 소폭 하락했습니다.',
+  },
+
+  // --- HARD (복합 추론 필요, ±10% ~ ±30% 고변동) ---
+  {
+    id: 'H01',
+    difficulty: 'HARD',
+    title: '브렌트유 배럴당 98달러 급등 속 나프타 크래킹 마진 마이너스 전환',
+    summary: '원유 정제 후 기초유분(에틸렌)을 생산할수록 손해가 나는 역마진 구조가 고착화되고 있습니다. 반면 산유국 발주 플랜트 프로젝트는 탄력을 받고 있습니다.',
+    impacts: { CHEM: -0.22, AIRL: -0.24, CNST: 0.16 },
+    outcomeNote: '고유가 직격탄으로 항공·석유화학이 급락한 반면, 중동 플랜트 수혜 기대감으로 건설이 급등했습니다.',
   },
   {
-    id: 'N11',
-    category: '수주 공시',
-    sector: '건설 · 철강',
-    title: '정부 50조 원 규모 전국 광역철도·신도시 인프라 착공 발표',
-    summary: '에코건설 대형 토목 수주잔고 급증 및 대한철강 H형강·후판 출하량 30% 확대 전망.',
-    impacts: { CNST: 0.23, STEL: 0.18 },
-    outcomeNote: '대형 SOC 인프라 투자 발표로 건설과 철강 섹터가 동반 급등했습니다.',
+    id: 'H02',
+    difficulty: 'HARD',
+    title: '미 국채 10년물 금리 급락 및 장단기 금리차 정상화 신호',
+    summary: '할인율 부담이 큰 장기 듀레이션 자산으로 글로벌 자금이 대거 이동하는 가운데, 순이자마진(NIM) 피크아웃 우려가 금융권 전반에 번지고 있습니다.',
+    impacts: { BIOH: 0.24, CNST: 0.19, SEMI: 0.14, FINC: -0.15 },
+    outcomeNote: '금리 하락 수혜로 바이오·건설·반도체가 급등하고, 마진 축소 우려로 금융이 하락했습니다.',
   },
   {
-    id: 'N12',
-    category: '업종 리스크',
-    sector: '철강 · 석유화학',
-    title: '중국발 저가 철강·화학 제품 대규모 밀어내기 수출',
-    summary: '글로벌 공급 과잉 심화로 제품 판가 하락. 대한철강과 넥스트케미칼 4분기 적자 전환 리스크 제기.',
-    impacts: { STEL: -0.20, CHEM: -0.18 },
-    outcomeNote: '공급 과잉 여파로 철강과 석유화학 업종이 동반 약세를 보였습니다.',
+    id: 'H03',
+    difficulty: 'HARD',
+    title: '원/달러 환율 1,440원 돌파… 외화 결제 비중 높은 업종 비상',
+    summary: '달러 결제 매출 비중이 75%를 넘는 수출 제조사는 환차익이 극대화되지만, 항공기 리스료와 유류비·원곡을 달러로 결제하는 내수·운송 기업은 영업외손실이 급증합니다.',
+    impacts: { AUTO: 0.20, SEMI: 0.18, COSM: 0.16, AIRL: -0.24, CONS: -0.14 },
+    outcomeNote: '고환율로 수출주(자동차·반도체·화장품)가 급등하고, 외화 비용이 큰 항공·소비재가 급락했습니다.',
   },
   {
-    id: 'N13',
-    category: '테마·임상',
-    sector: '바이오',
-    title: '넥스바이오, 표적항암제 글로벌 임상 3상 1차 지표 충족',
-    summary: '미국 FDA 신속심사 지정 및 글로벌 빅파마와 2조 원 규모 기술이전(L/O) 계약 임박.',
-    impacts: { BIOH: 0.30, COSM: 0.03 },
-    outcomeNote: '임상 3상 성공 및 기술수출 기대감으로 넥스바이오가 폭등했습니다.',
+    id: 'H04',
+    difficulty: 'HARD',
+    title: '중국 부동산 부양책 실망감… 열연강판·에틸렌 현물가 동반 신저가',
+    summary: '역내 인프라 착공 지연으로 잉여 물량이 아시아 시장에 저가로 쏟아지며, 전방 산업이 아닌 기초 소재 공급사들의 판가 방어가 사실상 불가능해졌습니다.',
+    impacts: { STEL: -0.24, CHEM: -0.20, AUTO: 0.12 },
+    outcomeNote: '원재료 판가 하락으로 철강·화학이 급락한 반면, 강판 원가가 낮아진 자동차는 수익성이 개선되었습니다.',
   },
   {
-    id: 'N14',
-    category: '리스크 경보',
-    sector: '바이오',
-    title: '넥스바이오 대규모 유상증자 및 임상 보완 요구(CRL) 수령',
-    summary: '주주가치 희석 우려와 신약 출시 1년 이상 지연 가능성에 투자심리 급랭.',
-    impacts: { BIOH: -0.26, FINC: 0.03 },
-    outcomeNote: '임상 지연 및 유상증자 악재로 넥스바이오가 급락했습니다.',
+    id: 'H05',
+    difficulty: 'HARD',
+    title: '글로벌 빅테크 CapEx(설비투자) 가이던스 35% 상향 vs 전력망 병목',
+    summary: '데이터센터용 가속기 발주는 폭증하고 있으나, 변압기·전력 인프라 부족으로 실제 가동 시점이 일부 지연될 수 있다는 신중론이 공존합니다.',
+    impacts: { SEMI: 0.25, CNST: 0.15 },
+    outcomeNote: 'AI 설비투자 상향 모멘텀으로 반도체와 데이터센터 시공 기대감의 건설이 동반 급등했습니다.',
   },
   {
-    id: 'N15',
-    category: '실적·매출',
-    sector: '소비재 · 석유화학',
-    title: '국제 곡물가 안정 및 K-푸드 글로벌 수출 역대 최고',
-    summary: '데일리푸드 원가율 4%p 개선 및 해외 법인 매출 28% 성장. 친환경 포장재 공급하는 넥스트케미칼도 수혜.',
-    impacts: { CONS: 0.18, CHEM: 0.09 },
-    outcomeNote: '원가 안정과 해외 수출 호조로 데일리푸드가 견조하게 상승했습니다.',
+    id: 'H06',
+    difficulty: 'HARD',
+    title: '지방 미분양 7만 호 돌파 및 브릿지론 연장 거부 사례 속출',
+    summary: '자금 경색 리스크가 시공사 책임준공 물량으로 전이되고 있으며, 주요 금융지주 역시 PF 충당금 추가 적립 압박에서 자유롭지 못한 상황입니다.',
+    impacts: { CNST: -0.28, STEL: -0.17, FINC: -0.13 },
+    outcomeNote: 'PF 부실 우려 확산으로 건설이 하한가 근접 급락했고 철강·금융도 동반 하락했습니다.',
   },
   {
-    id: 'N16',
-    category: '환율·수출',
-    sector: '자동차 · 반도체 · 항공',
-    title: '원/달러 환율 1,420원 돌파 (고환율 쇼크)',
-    summary: '수출 비중이 높은 반도체·자동차·화장품은 환차익 기대. 반면 외화부채·리스비가 큰 항공사는 손실 확대 우려.',
-    impacts: { SEMI: 0.11, AUTO: 0.12, COSM: 0.10, AIRL: -0.16 },
-    outcomeNote: '고환율 환경에서 수출주는 강세를, 외화 비용이 큰 항공주는 약세를 보였습니다.',
+    id: 'H07',
+    difficulty: 'HARD',
+    title: '아마존·틱톡샵 K-뷰티 역직구 폭증… 다만 플랫폼 광고비(CAC) 2배 상승',
+    summary: '외형 매출은 사상 최대를 경신 중이나, 인플루언서 시딩·광고 단가 급등으로 순이익률 개선 여부에 대해서는 애널리스트 간 의견이 극명히 갈립니다.',
+    impacts: { COSM: 0.22, CONS: 0.12 },
+    outcomeNote: '매출 폭발 성장에 무게가 실리며 화장품과 소비재가 큰 폭으로 상승했습니다.',
   },
   {
-    id: 'N17',
-    category: '테마·친환경',
-    sector: '석유화학 · 자동차',
-    title: '글로벌 친환경 배터리·스페셜티 소재 보조금 법안 통과',
-    summary: '넥스트케미칼의 고부가 양극재 첨가제 및 태극모터스 전기차 라인업 대규모 세제 혜택 확정.',
-    impacts: { CHEM: 0.19, AUTO: 0.14 },
-    outcomeNote: '친환경 소재 보조금 수혜로 넥스트케미칼과 태극모터스가 동반 상승했습니다.',
+    id: 'H08',
+    difficulty: 'HARD',
+    title: '국제 곡물(대두·소맥) 선물 가격 3개월 새 28% 급락',
+    summary: '남미 대풍작으로 식음료 제조사의 투입 원가 부담이 크게 줄어들 전망입니다. 판가 인하 압박보다 마진 스프레드 확대 효과가 훨씬 클 것으로 분석됩니다.',
+    impacts: { CONS: 0.22 },
+    outcomeNote: '원재료 곡물가 급락에 따른 마진 개선으로 데일리푸드가 급등했습니다.',
   },
   {
-    id: 'N18',
-    category: '방어·배당',
-    sector: '금융 · 소비재',
-    title: '글로벌 증시 변동성 경계감 확산… 배당·방어주 자금 쏠림',
-    summary: '실적 불확실성이 커지자 안정적인 현금흐름을 보유한 금융(세이프금융)과 필수소비재(데일리푸드)로 매수세 이동.',
-    impacts: { FINC: 0.10, CONS: 0.11, SEMI: -0.06, BIOH: -0.07 },
-    outcomeNote: '안전자산 선호 심리로 금융과 소비재가 상승하고 고변동성 성장주는 쉬어갔습니다.',
+    id: 'H09',
+    difficulty: 'HARD',
+    title: 'FDA 자문위원회, 동종 계열 표적항암제 부작용(독성) 데이터 재검토 요청',
+    summary: '타사 경쟁 약물의 안전성 이슈가 부각되면서, 동일 기전 파이프라인을 보유한 국내 바이오 기업들의 임상 통과 확률에 대한 재평가가 진행 중입니다.',
+    impacts: { BIOH: -0.26 },
+    outcomeNote: '동일 기전 안전성 우려 전이로 넥스바이오가 큰 폭으로 급락했습니다.',
+  },
+  {
+    id: 'H10',
+    difficulty: 'HARD',
+    title: '글로벌 빅파마 특허 절벽(Patent Cliff) 도래… 바이오시밀러·라이선스인 쟁탈전',
+    summary: '블록버스터 의약품 특허 만료를 앞둔 다국적 제약사들이 아시아권 후기 임상 파이프라인 확보에 총력을 기울이고 있습니다.',
+    impacts: { BIOH: 0.27 },
+    outcomeNote: '글로벌 기술이전 기대감이 폭발하며 넥스바이오가 급등했습니다.',
+  },
+  {
+    id: 'H11',
+    difficulty: 'HARD',
+    title: '북미 인플레이션 감축법(IRA) 세부 지침 개정… 역외 조달 부품 관세 유예',
+    summary: '한국계 완성차 및 첨단 소재 기업이 북미 현지 세액공제 요건을 충족하게 되면서, 경쟁사 대비 가격 경쟁력이 단숨에 역전되었습니다.',
+    impacts: { AUTO: 0.23, CHEM: 0.17 },
+    outcomeNote: 'IRA 수혜 확정으로 자동차와 첨단 소재(석유화학)가 동반 급등했습니다.',
+  },
+  {
+    id: 'H12',
+    difficulty: 'HARD',
+    title: '해상 운임 지수(SCFI) 4주 연속 급등 및 홍해 우회 항로 장기화',
+    summary: '해상 물류비 폭등으로 완성차·화장품 수출 기업의 운반비가 급증한 반면, 긴급 물량이 항공 화물로 전환되며 화물 운임 단가가 치솟고 있습니다.',
+    impacts: { AIRL: 0.21, AUTO: -0.15, COSM: -0.14 },
+    outcomeNote: '항공 화물 수요 급증으로 항공주가 급등했고, 물류비 부담으로 자동차·화장품은 하락했습니다.',
+  },
+  {
+    id: 'H13',
+    difficulty: 'HARD',
+    title: '정부 기업 밸류업 세제 혜택 확정… PBR 0.5배 미만 저평가주 배당 확대 의무화',
+    summary: '자사주 소각과 배당성향 상향 시 법인세 감면이 적용되면서, 전통적인 저PBR 가치주(금융·철강·자동차)로 기관 패시브 자금이 대거 유입되고 있습니다.',
+    impacts: { FINC: 0.18, STEL: 0.16, AUTO: 0.14 },
+    outcomeNote: '밸류업 세제 혜택으로 저PBR 대표주인 금융·철강·자동차가 동반 강세를 보였습니다.',
+  },
+  {
+    id: 'H14',
+    difficulty: 'HARD',
+    title: '주요국 반도체 첨단 패키징 장비 반입 금지 및 보복 관세 예고',
+    summary: '공급망 이원화 비용이 급증하면서 차세대 칩 양산 일정에 차질이 빚어질 수 있다는 경고음이 커지고 있습니다.',
+    impacts: { SEMI: -0.26, AUTO: -0.12 },
+    outcomeNote: '공급망 규제 충격으로 한빛반도체가 급락하고 차량용 칩 수급 우려로 자동차도 하락했습니다.',
+  },
+  {
+    id: 'H15',
+    difficulty: 'HARD',
+    title: '전 세계 탄소국경조정제도(CBAM) 조기 시행 합의',
+    summary: '탄소 배출량이 많은 고로 기반 철강과 전통 석유화학 제품에 톤당 탄소세가 부과되며, 저탄소 공법 전환 비용이 실적에 본격 반영됩니다.',
+    impacts: { STEL: -0.21, CHEM: -0.19 },
+    outcomeNote: '탄소세 부담 현실화로 철강과 석유화학이 동반 급락했습니다.',
+  },
+  {
+    id: 'H16',
+    difficulty: 'HARD',
+    title: '글로벌 경기 침체(R의 공포) 지표 발표… 안전자산 및 필수재 대피 랠리',
+    summary: '제조업 PMI가 3개월 연속 기준선(50)을 하회하며 경기 민감주(반도체·화학·철강·항공) 전반에서 대규모 투매가 발생하고 있습니다.',
+    impacts: { CONS: 0.17, FINC: 0.13, SEMI: -0.18, CHEM: -0.16, AIRL: -0.17 },
+    outcomeNote: '경기 침체 우려로 방어주(소비재·금융)만 상승하고 경기 민감주는 일제히 급락했습니다.',
+  },
+  {
+    id: 'H17',
+    difficulty: 'HARD',
+    title: '산유국 감산 철회 및 비OPEC 원유 생산량 사상 최대치 기록',
+    summary: '국제 유가가 배럴당 62달러까지 급락하면서 운송 및 석유화학 다운스트림 마진이 극적으로 개선되는 국면에 진입했습니다.',
+    impacts: { AIRL: 0.25, CHEM: 0.20 },
+    outcomeNote: '유가 급락에 따른 원가 절감으로 항공과 석유화학이 동반 급등했습니다.',
+  },
+  {
+    id: 'H18',
+    difficulty: 'HARD',
+    title: '국가 주도 80조 원 규모 에코 스마트시티·철도 지하화 특별법 통과',
+    summary: '대규모 공공 토목 발주와 특수강재 수요가 향후 5년간 보장되면서 관련 밸류체인 전체의 실적 추정치가 상향 조정되고 있습니다.',
+    impacts: { CNST: 0.25, STEL: 0.21 },
+    outcomeNote: '대규모 인프라 특별법 통과로 건설과 철강이 동반 급등했습니다.',
+  },
+  {
+    id: 'H19',
+    difficulty: 'HARD',
+    title: '주요국 화장품 위생허가(NMPA) 전면 재심사 및 면세 따이공 수수료 축소',
+    summary: '중국향 통관 지연과 면세 채널 매출 급감이 겹치며, 북미 다변화에 성공하지 못한 브랜드들의 재고 손실이 눈덩이처럼 불어나고 있습니다.',
+    impacts: { COSM: -0.25 },
+    outcomeNote: '통관 규제 및 면세 채널 부진으로 루나코스메틱이 급락했습니다.',
+  },
+  {
+    id: 'H20',
+    difficulty: 'HARD',
+    title: '유럽연합, 내연기관 퇴출 유예 및 하이브리드 차량 보조금 부활',
+    summary: '전기차 캐즘(일시적 수요 정체) 속에서 하이브리드 라인업 비중이 높은 완성차 제조사의 점유율과 대당 마진이 폭발적으로 확대되고 있습니다.',
+    impacts: { AUTO: 0.24, CHEM: -0.14 },
+    outcomeNote: '하이브리드 호황으로 태극모터스가 급등한 반면 배터리 소재 중심의 화학은 하락했습니다.',
+  },
+  {
+    id: 'H21',
+    difficulty: 'HARD',
+    title: '시중은행 예대금리차 축소 권고 및 가계부채 총량 규제 강화',
+    summary: '대출 성장세 둔화와 이자이익 감소가 불가피해지면서 배당 매력에도 불구하고 금융 섹터 전반에 매도세가 출회되고 있습니다.',
+    impacts: { FINC: -0.16, CNST: -0.14 },
+    outcomeNote: '대출 규제 강화로 금융과 부동산 연계 건설주가 동반 하락했습니다.',
+  },
+  {
+    id: 'H22',
+    difficulty: 'HARD',
+    title: '글로벌 외식 물가 폭등… 가정간편식(HMR) 및 PB 식품 소비 폭발',
+    summary: '외식을 줄이고 집밥·간편식을 찾는 소비자가 급증하면서 대형 식품·유통사의 가동률과 영업 레버리지 효과가 극대화되고 있습니다.',
+    impacts: { CONS: 0.20, COSM: -0.12 },
+    outcomeNote: '불황형 소비 확산으로 데일리푸드가 급등하고 고가 소비(화장품)는 소폭 조정을 받았습니다.',
   },
 ];
 
@@ -310,7 +409,7 @@ const MARKET_NEWS_DECK = [
 const state = {
   phase: 'LOBBY', // LOBBY | TRADING | MARKET_CLOSE | GAME_OVER
   round: 0,
-  totalRounds: 5,
+  totalRounds: 16,
   timer: 0,
   paused: false,
   phaseNonce: 0,
@@ -337,6 +436,7 @@ function initStocks() {
       price: item.initialPrice,
       prevPrice: item.initialPrice,
       pctChange: 0,
+      limitTag: null, // '상한가' | '하한가' | null
       history: [item.initialPrice],
     };
   }
@@ -437,7 +537,12 @@ function broadcastState() {
     paused: state.paused,
     phaseNonce: state.phaseNonce,
     stocks: Object.values(state.stocks),
-    briefings: state.currentBriefings,
+    // 클라이언트에는 제목과 내용(summary)만 전달해 업종/난이도 힌트 차단
+    briefings: state.currentBriefings.map((b) => ({
+      id: b.id,
+      title: b.title,
+      summary: b.summary,
+    })),
     roundSummaryLogs: state.roundSummaryLogs,
     players: getPublicPlayers(),
     rankings: (state.phase === 'MARKET_CLOSE' || state.phase === 'GAME_OVER') ? getRankings() : [],
@@ -465,19 +570,41 @@ function startTimer(seconds, onExpire) {
 }
 
 // ---------------------------------------------------------------------------
-// 라운드 진행 로직
+// 라운드 진행 로직 (라운드당 6개 브리핑 제공)
 // ---------------------------------------------------------------------------
 function drawRoundBriefings() {
   let pool = MARKET_NEWS_DECK.filter((n) => !state.usedNewsIds.has(n.id));
-  if (pool.length < 4) {
+  if (pool.length < 6) {
     state.usedNewsIds.clear();
     pool = [...MARKET_NEWS_DECK];
   }
-  for (let i = pool.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
+  const easyPool = pool.filter((n) => n.difficulty === 'EASY');
+  const hardPool = pool.filter((n) => n.difficulty === 'HARD');
+
+  const shuffle = (arr) => {
+    for (let i = arr.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  };
+
+  shuffle(easyPool);
+  shuffle(hardPool);
+
+  // 쉬운 정보 2개 + 어려운 복합 정보 4개 우선 배합 (총 6개)
+  const picked = [
+    ...easyPool.slice(0, 2),
+    ...hardPool.slice(0, 4),
+  ];
+
+  // 부족분 보충
+  if (picked.length < 6) {
+    const remaining = shuffle(pool.filter((n) => !picked.includes(n)));
+    picked.push(...remaining.slice(0, 6 - picked.length));
   }
-  const picked = pool.slice(0, 4);
+
+  shuffle(picked);
   picked.forEach((n) => state.usedNewsIds.add(n.id));
   return picked;
 }
@@ -500,29 +627,46 @@ function closeMarketAndSettle() {
   state.phaseNonce += 1;
 
   const sectorDelta = {};
+  const touchedByHard = {};
   Object.keys(state.stocks).forEach((code) => {
     sectorDelta[code] = 0;
+    touchedByHard[code] = false;
   });
 
   const logs = [];
   for (const news of state.currentBriefings) {
-    logs.push(`📰 [${news.category}] ${news.outcomeNote}`);
+    logs.push(`📰 ${news.outcomeNote}`);
     for (const [code, delta] of Object.entries(news.impacts)) {
       if (sectorDelta[code] !== undefined) {
         sectorDelta[code] += delta;
+        if (news.difficulty === 'HARD') touchedByHard[code] = true;
       }
     }
   }
 
   for (const stock of Object.values(state.stocks)) {
     stock.prevPrice = stock.price;
-    const noiseRange = stock.volatility === 'HIGH' ? 0.05 : stock.volatility === 'MEDIUM' ? 0.035 : 0.02;
+    const noiseRange = touchedByHard[stock.code] ? 0.04 : 0.02;
     const noise = (Math.random() * 2 - 1) * noiseRange;
-    const rawPct = sectorDelta[stock.code] + noise;
-    const clampedPct = Math.max(-0.35, Math.min(0.45, rawPct));
-    const newPrice = Math.max(1000, Math.round((stock.price * (1 + clampedPct)) / 100) * 100);
+    let rawPct = sectorDelta[stock.code] + noise;
+
+    // HARD 뉴스에만 영향받지 않은(EASY만 적용된) 종목은 ±10% 이내로 제한
+    if (!touchedByHard[stock.code] && sectorDelta[stock.code] !== 0) {
+      rawPct = Math.max(-0.10, Math.min(0.10, rawPct));
+    }
+
+    // 하루 상·하한가 최대 ±30% 제한
+    const clampedPct = Math.max(-0.30, Math.min(0.30, rawPct));
+    let newPrice = Math.max(1000, Math.round((stock.price * (1 + clampedPct)) / 100) * 100);
+
+    // 100원 반올림으로 ±30% 초과 방지
+    const maxAllowed = Math.floor((stock.prevPrice * 1.30) / 100) * 100;
+    const minAllowed = Math.max(1000, Math.ceil((stock.prevPrice * 0.70) / 100) * 100);
+    newPrice = Math.min(maxAllowed, Math.max(minAllowed, newPrice));
+
     stock.price = newPrice;
     stock.pctChange = Number((((newPrice - stock.prevPrice) / stock.prevPrice) * 100).toFixed(1));
+    stock.limitTag = stock.pctChange >= 29.5 ? '상한가' : stock.pctChange <= -29.5 ? '하한가' : null;
     stock.history.push(newPrice);
   }
 
@@ -539,7 +683,7 @@ function closeMarketAndSettle() {
     }
   }
   if (dividendReceivers > 0) {
-    logs.push(`🏦 [배당 지급] 세이프금융(FINC) 보유자 ${dividendReceivers}명에게 평가액의 4% 현금 배당이 입금되었습니다.`);
+    logs.push(`🏦 세이프금융(FINC) 보유자 ${dividendReceivers}명에게 평가액의 4% 현금 배당이 입금되었습니다.`);
   }
 
   state.roundSummaryLogs = logs;
@@ -653,7 +797,6 @@ io.on('connection', (socket) => {
     broadcastState();
   });
 
-  // 방장 게임 시작 (1~35명 지원: 혼자서도 시작 가능)
   socket.on('host:start_game', ({ totalRounds }, callback) => {
     if (!isHostSocket(socket)) return callback?.({ ok: false, error: '방장 권한이 없습니다.' });
     cleanupDeadSockets();
@@ -662,8 +805,8 @@ io.on('connection', (socket) => {
       return callback?.({ ok: false, error: '최소 1명 이상의 참가자가 필요합니다.' });
     }
 
-    const roundsNum = Number(totalRounds);
-    state.totalRounds = [4, 5, 6].includes(roundsNum) ? roundsNum : 5;
+    const roundsNum = Math.floor(Number(totalRounds));
+    state.totalRounds = (Number.isFinite(roundsNum) && roundsNum >= 1 && roundsNum <= 16) ? roundsNum : 16;
     state.round = 0;
     state.usedNewsIds.clear();
     state.chatHistory = [];
