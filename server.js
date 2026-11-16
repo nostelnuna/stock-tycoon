@@ -78,7 +78,7 @@ const STOCK_CATALOG = [
     emoji: '🏦',
     initialPrice: 10000,
     volatility: 'LOW',
-    desc: '대형 금융지주. 금리 변동에 반응하며 매 라운드 장 마감 시 보유 평가액의 4% 배당 지급.',
+    desc: '대형 금융지주. 금리 변동 및 대출·건전성 지표에 따라 주가가 움직이는 대표 가치주.',
   },
   {
     code: 'CONS',
@@ -772,21 +772,7 @@ function closeMarketAndSettle() {
     stock.history.push(newPrice);
   }
 
-  // 세이프금융(FINC) 보유자 4% 배당금 지급
-  let dividendReceivers = 0;
-  for (const p of state.players.values()) {
-    const finPos = p.holdings.FINC;
-    if (finPos && finPos.qty > 0) {
-      const divAmount = Math.round((finPos.qty * state.stocks.FINC.price * 0.04) / 100) * 100;
-      if (divAmount > 0) {
-        p.cash += divAmount;
-        dividendReceivers += 1;
-      }
-    }
-  }
-  if (dividendReceivers > 0) {
-    logs.push(`🏦 세이프금융(FINC) 보유자 ${dividendReceivers}명에게 평가액의 4% 현금 배당이 입금되었습니다.`);
-  }
+
 
   state.roundSummaryLogs = logs;
 
