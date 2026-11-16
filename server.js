@@ -134,6 +134,24 @@ const STOCK_CATALOG = [
     volatility: 'HIGH',
     desc: '신약 파이프라인 및 바이오시밀러 개발사. 임상 결과 및 기술수출 공시에 따라 급등락.',
   },
+  {
+    code: 'CRYP',
+    name: '비트체인',
+    sector: '가상자산',
+    emoji: '🪙',
+    initialPrice: 10000,
+    volatility: 'HIGH',
+    desc: '디지털 자산 거래소 및 블록체인 인프라 기업. 글로벌 유동성·규제·ETF 자금 흐름에 극도로 민감.',
+  },
+  {
+    code: 'ENRG',
+    name: '그린파워',
+    sector: '에너지',
+    emoji: '⚡',
+    initialPrice: 9000,
+    volatility: 'MEDIUM',
+    desc: '신재생 발전·전력망·원자력 인프라 기업. AI 데이터센터 전력 수요와 에너지 정책에 연동.',
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -480,6 +498,33 @@ const HIDDEN_EVENT_DECK = [
     impacts: { AIRL: -0.45, COSM: -0.35, CONS: 0.25, BIOH: 0.30 },
     outcomeNote: '🕵️ [히든 변수 공개] 감염병 변이 경보로 항공·화장품이 급락하고 바이오·소비재가 급등했습니다.',
   },
+  {
+    id: 'HD_POS_5',
+    difficulty: 'HARD',
+    isHidden: true,
+    title: '주요국 중앙은행, 디지털 자산 전략적 비축 및 결제망 통합 전격 발표',
+    summary: '국가 단위 매입과 초국경 결제 채택이 선언되며 가상자산 시장에 전례 없는 자금이 쏠리고 있습니다.',
+    impacts: { CRYP: 0.45, SEMI: 0.18 },
+    outcomeNote: '🕵️ [히든 변수 공개] 국가 단위 디지털 자산 채택 발표! 비트체인이 폭등했습니다.',
+  },
+  {
+    id: 'HD_NEG_5',
+    difficulty: 'HARD',
+    isHidden: true,
+    title: '글로벌 대형 가상자산 수탁사 해킹 사고 및 대규모 인출 중단 사태',
+    summary: '신뢰도 붕괴로 디지털 자산 전반에 패닉 셀이 발생하며 관련 인프라 기업이 직격탄을 맞았습니다.',
+    impacts: { CRYP: -0.45, FINC: 0.08 },
+    outcomeNote: '🕵️ [히든 변수 공개] 대형 수탁사 해킹 사태로 비트체인이 폭락했습니다.',
+  },
+  {
+    id: 'HD_POS_6',
+    difficulty: 'HARD',
+    isHidden: true,
+    title: '초전도 송전망·차세대 청정에너지 상용화 실증 전격 성공',
+    summary: '전력 손실 제로에 가까운 송전 기술이 공개되며 에너지와 반도체 산업의 원가 구조가 혁신됩니다.',
+    impacts: { ENRG: 0.42, SEMI: 0.22, CHEM: 0.15 },
+    outcomeNote: '🕵️ [히든 변수 공개] 차세대 에너지·송전 기술 실증 성공으로 그린파워가 폭등했습니다.',
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -680,7 +725,7 @@ function startTimer(seconds, onExpire) {
 // ---------------------------------------------------------------------------
 function drawRoundBriefings() {
   let pool = MARKET_NEWS_DECK.filter((n) => !state.usedNewsIds.has(n.id));
-  if (pool.length < 6) {
+  if (pool.length < 8) {
     state.usedNewsIds.clear();
     pool = [...MARKET_NEWS_DECK];
   }
@@ -698,9 +743,9 @@ function drawRoundBriefings() {
   shuffle(easyPool);
   shuffle(hardPool);
 
-  // 가끔씩(약 45% 확률) 1개 슬롯을 예측 불가능한 히든 이벤트(???)로 대체
+  // 라운드당 8개 정보 제공 (쉬운 정보 2개 + 복합 추론 정보 5~6개, 약 45% 확률로 1개 히든 변수 ???)
   const includeHidden = Math.random() < 0.45;
-  const hardCount = includeHidden ? 3 : 4;
+  const hardCount = includeHidden ? 5 : 6;
   const picked = [
     ...easyPool.slice(0, 2),
     ...hardPool.slice(0, hardCount),
@@ -712,10 +757,9 @@ function drawRoundBriefings() {
     picked.push(hPool[0]);
   }
 
-  // 부족분 보충
-  if (picked.length < 6) {
+  if (picked.length < 8) {
     const remaining = shuffle(pool.filter((n) => !picked.includes(n)));
-    picked.push(...remaining.slice(0, 6 - picked.length));
+    picked.push(...remaining.slice(0, 8 - picked.length));
   }
 
   shuffle(picked);
