@@ -643,20 +643,33 @@ function broadcastState() {
   });
 }
 
+let lastManualAdvanceAt = 0;
+
 function startTimer(seconds, onExpire) {
-  if (timerInterval) clearInterval(timerInterval);
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  const expectedNonce = state.phaseNonce;
   state.timer = seconds;
   state.paused = false;
   broadcastState();
 
   timerInterval = setInterval(() => {
+    if (state.phaseNonce !== expectedNonce) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      return;
+    }
     if (state.paused) return;
     state.timer -= 1;
     if (state.timer <= 0) {
       clearInterval(timerInterval);
       timerInterval = null;
       state.timer = 0;
-      onExpire();
+      if (state.phaseNonce === expectedNonce) {
+        onExpire();
+      }
     } else {
       io.emit('game:tick', { timer: state.timer, paused: state.paused });
     }
@@ -776,7 +789,7 @@ function closeMarketAndSettle() {
 
   state.roundSummaryLogs = logs;
 
-  startTimer(18, () => {
+  startTimer(25, () => {
     if (state.round >= state.totalRounds) {
       state.phase = 'GAME_OVER';
       state.phaseNonce += 1;
@@ -929,6 +942,11 @@ io.on('connection', (socket) => {
 
   socket.on('host:next_phase', (_, callback) => {
     if (!isHostSocket(socket)) return callback?.({ ok: false });
+    const now = Date.now();
+    if (now - lastManualAdvanceAt < 1500) {
+      return callback?.({ ok: false, error: '잠시 후 다시 시도해 주세요.' });
+    }
+    lastManualAdvanceAt = now;
     advancePhaseManually();
     return callback?.({ ok: true });
   });
