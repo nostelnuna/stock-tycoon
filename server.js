@@ -773,7 +773,7 @@ function startTradingPhase() {
   state.phaseNonce += 1;
   state.roundSummaryLogs = [];
   state.currentBriefings = drawRoundBriefings();
-  startTimer(90, closeMarketAndSettle);
+  startTimer(120, closeMarketAndSettle);
 }
 
 function closeMarketAndSettle() {
