@@ -195,10 +195,11 @@
         `;
       }
 
-      // 우측 참가자 목록 (자산 순 정렬)
-      const sortedPlayers = [...st.players].sort((a, b) => b.totalAsset - a.totalAsset);
+      // 우측 참가자 목록 (진행 중에는 자산 비공개, 최종 종료 시에만 공개)
+      const showAmounts = st.phase === 'GAME_OVER';
+      const displayPlayers = showAmounts ? [...st.players].sort((a, b) => b.totalAsset - a.totalAsset) : st.players;
       document.getElementById('playerCount').textContent = st.players.length;
-      document.getElementById('hostPlayerList').innerHTML = sortedPlayers.map((p) => {
+      document.getElementById('hostPlayerList').innerHTML = displayPlayers.map((p) => {
         const sign = p.returnPct > 0 ? '+' : '';
         const pctColor = p.returnPct > 0 ? 'text-rose-400' : p.returnPct < 0 ? 'text-sky-400' : 'text-slate-400';
         return `
@@ -208,8 +209,7 @@
               <span class="font-bold text-white">${escapeHtml(p.nickname)}</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="font-mono text-slate-200 font-bold">${p.totalAsset.toLocaleString()}원</span>
-              <span class="font-mono font-bold ${pctColor}">(${sign}${p.returnPct}%)</span>
+              ${showAmounts ? `<span class="font-mono text-slate-200 font-bold">${p.totalAsset.toLocaleString()}원</span><span class="font-mono font-bold ${pctColor}">(${sign}${p.returnPct}%)</span>` : ''}
               <button onclick="kickPlayer('${p.token}')" class="text-rose-400 hover:text-rose-300 font-bold px-1">✕</button>
             </div>
           </div>
@@ -299,20 +299,37 @@
             <h2 class="text-lg font-bold text-amber-300">📰 ${st.round}라운드 시장 브리핑 (6개 정보)</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               ${st.briefings.map((b) => `
-                <div class="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-1.5">
-                  <div class="font-bold text-sm text-white">${escapeHtml(b.title)}</div>
-                  <p class="text-xs text-slate-300 leading-relaxed">${escapeHtml(b.summary)}</p>
+                <div class="p-4 rounded-2xl ${b.isHidden ? 'bg-purple-950/40 border-purple-500/50' : 'bg-slate-900/90 border-slate-800'} border space-y-1.5">
+                  <div class="font-bold text-sm ${b.isHidden ? 'text-purple-300' : 'text-white'}">${escapeHtml(b.title)}</div>
+                  <p class="text-xs ${b.isHidden ? 'text-purple-200/80' : 'text-slate-300'} leading-relaxed">${escapeHtml(b.summary)}</p>
                 </div>
               `).join('')}
             </div>
           </div>
         ` : `
-          <div class="panel rounded-3xl p-6 space-y-3">
+          <div class="panel rounded-3xl p-6 space-y-4">
             <h2 class="text-lg font-bold text-emerald-400">🔔 ${st.round}라운드 장 마감 결과</h2>
             <div class="space-y-2">
               ${st.roundSummaryLogs.map((l) => `
                 <div class="p-3.5 rounded-2xl bg-slate-900 border border-slate-800 text-sm text-slate-100">${escapeHtml(l)}</div>
               `).join('')}
+            </div>
+            <div class="pt-4 border-t border-slate-800 space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="text-base font-bold text-amber-300">🏅 ${st.round}라운드 중간 순위</h3>
+                <span class="text-xs text-slate-400">자산 총액 비공개 · 닉네임 순위만 공개</span>
+              </div>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-2.5">
+                ${st.rankings.map((r) => {
+                  const medal = r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : `${r.rank}위`;
+                  return `
+                    <div class="px-4 py-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center gap-2.5 text-sm">
+                      <span class="font-extrabold text-amber-300">${medal}</span>
+                      <span class="font-bold text-white truncate">${escapeHtml(r.nickname)}</span>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
             </div>
           </div>
         `}

@@ -405,6 +405,24 @@
                 <div class="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-xs text-slate-200">${escapeHtml(l)}</div>
               `).join('')}
             </div>
+            <div class="pt-3 border-t border-slate-800 space-y-2">
+              <div class="flex items-center justify-between">
+                <h4 class="font-bold text-xs text-emerald-300">🏅 ${st.round}라운드 종료 중간 순위</h4>
+                <span class="text-[10px] text-slate-400">자산 총액 비공개 · 순위만 공개</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                ${st.rankings.map((r) => {
+                  const isMe = r.token === myToken;
+                  const medal = r.rank === 1 ? '🥇' : r.rank === 2 ? '🥈' : r.rank === 3 ? '🥉' : `${r.rank}위`;
+                  return `
+                    <div class="px-3 py-2 rounded-xl ${isMe ? 'bg-emerald-500/20 border-emerald-400' : 'bg-slate-900/80 border-slate-800'} border flex items-center gap-2 text-xs">
+                      <span class="font-extrabold w-7 text-center">${medal}</span>
+                      <span class="font-bold text-white">${escapeHtml(r.nickname)} ${isMe ? '<span class="text-[10px] text-emerald-400">(나)</span>' : ''}</span>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
           </div>
         `;
         return;
@@ -458,9 +476,9 @@
             <h3 class="font-bold text-sm text-amber-300">📰 ${st.round}라운드 시장 브리핑 (6개 정보)</h3>
             <div class="space-y-2">
               ${st.briefings.map((b) => `
-                <div class="p-3 rounded-xl bg-slate-900/85 border border-slate-800 space-y-1">
-                  <div class="font-bold text-xs sm:text-sm text-white">${escapeHtml(b.title)}</div>
-                  <p class="text-[11px] text-slate-300 leading-relaxed">${escapeHtml(b.summary)}</p>
+                <div class="p-3 rounded-xl ${b.isHidden ? 'bg-purple-950/40 border-purple-500/50' : 'bg-slate-900/85 border-slate-800'} border space-y-1">
+                  <div class="font-bold text-xs sm:text-sm ${b.isHidden ? 'text-purple-300' : 'text-white'}">${escapeHtml(b.title)}</div>
+                  <p class="text-[11px] ${b.isHidden ? 'text-purple-200/80' : 'text-slate-300'} leading-relaxed">${escapeHtml(b.summary)}</p>
                 </div>
               `).join('')}
             </div>

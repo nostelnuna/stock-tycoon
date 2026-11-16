@@ -403,6 +403,85 @@ const MARKET_NEWS_DECK = [
   },
 ];
 
+
+// ---------------------------------------------------------------------------
+// 히든 돌발 이벤트 덱 (긍정적 / 부정적 각 4종 — 장 마감 시 정체 공개)
+// ---------------------------------------------------------------------------
+const HIDDEN_EVENT_DECK = [
+  {
+    id: 'HD_POS_1',
+    difficulty: 'HARD',
+    isHidden: true,
+    title: '글로벌 무역 분쟁 전격 타결 및 관세 전면 철폐 선언',
+    summary: '예상치 못한 정상회담 합의로 주요국 간 보복 관세가 즉시 철회되었습니다.',
+    impacts: { SEMI: 0.22, AUTO: 0.22, COSM: 0.18, AIRL: 0.15 },
+    outcomeNote: '🕵️ [히든 변수 공개] 글로벌 관세 철폐 전격 타결! 수출주 전반이 급등했습니다.',
+  },
+  {
+    id: 'HD_POS_2',
+    difficulty: 'HARD',
+    isHidden: true,
+    title: '차세대 고효율 친환경 소재·배터리 혁신 기술 상용화 발표',
+    summary: '생산 단가를 절반으로 낮추는 혁신 공정이 전격 공개되며 산업계 판도가 뒤바뀌고 있습니다.',
+    impacts: { CHEM: 0.24, AUTO: 0.18, STEL: 0.12 },
+    outcomeNote: '🕵️ [히든 변수 공개] 혁신 소재 상용화 발표로 석유화학·자동차·철강이 급등했습니다.',
+  },
+  {
+    id: 'HD_POS_3',
+    difficulty: 'HARD',
+    isHidden: true,
+    title: '글로벌 보건당국, 넥스바이오 핵심 신약 긴급사용승인 전격 결정',
+    summary: '예정보다 1년 앞당겨진 긴급 승인으로 즉각적인 글로벌 매출 발생이 확정되었습니다.',
+    impacts: { BIOH: 0.28, CONS: 0.08 },
+    outcomeNote: '🕵️ [히든 변수 공개] 넥스바이오 신약 긴급사용승인! 바이오 업종이 상한가 근접 폭등했습니다.',
+  },
+  {
+    id: 'HD_POS_4',
+    difficulty: 'HARD',
+    isHidden: true,
+    title: '국제기구·주요국 100조 원 규모 공동 재건 및 관광 진흥 패키지 가동',
+    summary: '대규모 평화 재건 사업과 무비자 관광 특구 지정이 동시에 발표되었습니다.',
+    impacts: { CNST: 0.24, AIRL: 0.22, STEL: 0.18, COSM: 0.14 },
+    outcomeNote: '🕵️ [히든 변수 공개] 대규모 재건·관광 패키지 가동으로 건설·항공·철강·화장품이 동반 급등했습니다.',
+  },
+  {
+    id: 'HD_NEG_1',
+    difficulty: 'HARD',
+    isHidden: true,
+    title: '핵심 해상 물류로 군사 충돌 발발 및 긴급 항로 봉쇄',
+    summary: '예고 없는 무력 충돌로 국제 유가가 급등하고 글로벌 물류망이 마비되었습니다.',
+    impacts: { AIRL: -0.26, CHEM: -0.22, AUTO: -0.14, FINC: 0.06 },
+    outcomeNote: '🕵️ [히든 변수 공개] 해상 물류로 군사 충돌 발발! 항공·화학·자동차가 급락했습니다.',
+  },
+  {
+    id: 'HD_NEG_2',
+    difficulty: 'HARD',
+    isHidden: true,
+    title: '글로벌 금융·전산망 대규모 사이버 테러 발생',
+    summary: '주요 결제망과 반도체 설계 서버가 동시 공격을 받아 일시 가동 중단 사태가 벌어졌습니다.',
+    impacts: { FINC: -0.24, SEMI: -0.18, CONS: -0.12 },
+    outcomeNote: '🕵️ [히든 변수 공개] 대규모 사이버 테러 발생으로 금융·반도체·소비재가 하락했습니다.',
+  },
+  {
+    id: 'HD_NEG_3',
+    difficulty: 'HARD',
+    isHidden: true,
+    title: '주요 산업단지 대규모 정전 및 핵심 소재 공장 가동 중단',
+    summary: '예기치 못한 전력망 사고로 반도체·철강·화학 라인의 복구에 수 주가 소요될 전망입니다.',
+    impacts: { SEMI: -0.25, STEL: -0.22, CHEM: -0.20 },
+    outcomeNote: '🕵️ [히든 변수 공개] 산업단지 대형 정전 사태로 반도체·철강·석유화학이 급락했습니다.',
+  },
+  {
+    id: 'HD_NEG_4',
+    difficulty: 'HARD',
+    isHidden: true,
+    title: '신종 감염병 변이 확산 경보 및 국제선 검역 재강화',
+    summary: '각국 국경 통제 강화 조짐으로 여행·면세 수요가 급감하고 비대면·의약품 수요가 급증하고 있습니다.',
+    impacts: { AIRL: -0.28, COSM: -0.22, CONS: 0.16, BIOH: 0.18 },
+    outcomeNote: '🕵️ [히든 변수 공개] 감염병 변이 경보로 항공·화장품이 급락하고 바이오·소비재가 급등했습니다.',
+  },
+];
+
 // ---------------------------------------------------------------------------
 // 게임 상태 저장소
 // ---------------------------------------------------------------------------
@@ -529,6 +608,11 @@ function getPublicPlayers() {
 }
 
 function broadcastState() {
+  const rawRankings = (state.phase === 'MARKET_CLOSE' || state.phase === 'GAME_OVER') ? getRankings() : [];
+  const safeRankings = state.phase === 'MARKET_CLOSE'
+    ? rawRankings.map((r) => ({ rank: r.rank, token: r.token, nickname: r.nickname }))
+    : rawRankings;
+
   io.emit('game:state', {
     phase: state.phase,
     round: state.round,
@@ -537,15 +621,25 @@ function broadcastState() {
     paused: state.paused,
     phaseNonce: state.phaseNonce,
     stocks: Object.values(state.stocks),
-    // 클라이언트에는 제목과 내용(summary)만 전달해 업종/난이도 힌트 차단
-    briefings: state.currentBriefings.map((b) => ({
-      id: b.id,
-      title: b.title,
-      summary: b.summary,
-    })),
+    briefings: state.currentBriefings.map((b) => {
+      if (b.isHidden && state.phase === 'TRADING') {
+        return {
+          id: b.id,
+          isHidden: true,
+          title: '???',
+          summary: '장 마감 전까지 내용이 공개되지 않는 돌발 히든 변수입니다. (시장에 큰 긍정적 또는 부정적 충격을 줄 수 있습니다)',
+        };
+      }
+      return {
+        id: b.id,
+        isHidden: Boolean(b.isHidden),
+        title: b.title,
+        summary: b.summary,
+      };
+    }),
     roundSummaryLogs: state.roundSummaryLogs,
     players: getPublicPlayers(),
-    rankings: (state.phase === 'MARKET_CLOSE' || state.phase === 'GAME_OVER') ? getRankings() : [],
+    rankings: safeRankings,
   });
 }
 
@@ -592,11 +686,19 @@ function drawRoundBriefings() {
   shuffle(easyPool);
   shuffle(hardPool);
 
-  // 쉬운 정보 2개 + 어려운 복합 정보 4개 우선 배합 (총 6개)
+  // 가끔씩(약 45% 확률) 1개 슬롯을 예측 불가능한 히든 이벤트(???)로 대체
+  const includeHidden = Math.random() < 0.45;
+  const hardCount = includeHidden ? 3 : 4;
   const picked = [
     ...easyPool.slice(0, 2),
-    ...hardPool.slice(0, 4),
+    ...hardPool.slice(0, hardCount),
   ];
+  if (includeHidden) {
+    let hPool = HIDDEN_EVENT_DECK.filter((h) => !state.usedNewsIds.has(h.id));
+    if (hPool.length === 0) hPool = [...HIDDEN_EVENT_DECK];
+    shuffle(hPool);
+    picked.push(hPool[0]);
+  }
 
   // 부족분 보충
   if (picked.length < 6) {
