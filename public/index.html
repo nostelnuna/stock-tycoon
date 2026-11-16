@@ -75,7 +75,8 @@
         <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-700">
           <button onclick="selectRounds(8)" id="rBtn8" class="round-opt px-2.5 py-1 rounded text-xs font-bold text-slate-300">8R</button>
           <button onclick="selectRounds(12)" id="rBtn12" class="round-opt px-2.5 py-1 rounded text-xs font-bold text-slate-300">12R</button>
-          <button onclick="selectRounds(16)" id="rBtn16" class="round-opt px-2.5 py-1 rounded text-xs font-bold bg-emerald-500 text-slate-950">16R</button>
+          <button onclick="selectRounds(16)" id="rBtn16" class="round-opt px-2.5 py-1 rounded text-xs font-bold text-slate-300">16R</button>
+          <button onclick="selectRounds(20)" id="rBtn20" class="round-opt px-2.5 py-1 rounded text-xs font-bold bg-emerald-500 text-slate-950">20R</button>
         </div>
         <button onclick="hostStartGame()" class="tap-btn flex-1 py-2 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs">장 개장 (게임 시작)</button>
       </div>
@@ -139,7 +140,7 @@
     let myToken = localStorage.getItem('st_player_token') || null;
     let hostToken = localStorage.getItem('st_host_token') || null;
     let isHost = false;
-    let selectedRounds = 16;
+    let selectedRounds = 20;
     let latestState = null;
     let lastRenderedPhaseKey = null;
 
@@ -233,7 +234,7 @@
     // 방장 제어
     function selectRounds(n) {
       selectedRounds = n;
-      [8, 12, 16].forEach((r) => {
+      [8, 12, 16, 20].forEach((r) => {
         const btn = document.getElementById(`rBtn${r}`);
         btn.className = r === n
           ? 'round-opt px-2.5 py-1 rounded text-xs font-bold bg-emerald-500 text-slate-950'

@@ -69,7 +69,7 @@
   <script>
     const socket = io();
     let hostToken = localStorage.getItem('st_host_token') || null;
-    let selectedRounds = 16;
+    let selectedRounds = 20;
     let ttsEnabled = true;
     let lastSpokenKey = null;
 
@@ -180,7 +180,7 @@
       if (st.phase === 'LOBBY') {
         toolbar.innerHTML = `
           <div class="flex items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-700">
-            ${[8, 12, 16].map((r) => `
+            ${[8, 12, 16, 20].map((r) => `
               <button onclick="setRounds(${r})" class="px-3 py-1.5 rounded-lg text-xs font-bold ${selectedRounds === r ? 'bg-emerald-500 text-slate-950' : 'text-slate-300'}">${r}R</button>
             `).join('')}
           </div>

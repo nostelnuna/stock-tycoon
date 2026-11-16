@@ -488,7 +488,7 @@ const HIDDEN_EVENT_DECK = [
 const state = {
   phase: 'LOBBY', // LOBBY | TRADING | MARKET_CLOSE | GAME_OVER
   round: 0,
-  totalRounds: 16,
+  totalRounds: 20,
   timer: 0,
   paused: false,
   phaseNonce: 0,
@@ -902,7 +902,7 @@ io.on('connection', (socket) => {
     }
 
     const roundsNum = Math.floor(Number(totalRounds));
-    state.totalRounds = (Number.isFinite(roundsNum) && roundsNum >= 1 && roundsNum <= 16) ? roundsNum : 16;
+    state.totalRounds = (Number.isFinite(roundsNum) && roundsNum >= 1 && roundsNum <= 20) ? roundsNum : 20;
     state.round = 0;
     state.usedNewsIds.clear();
     state.chatHistory = [];
