@@ -286,7 +286,7 @@
                   <div class="text-base font-extrabold text-white">${s.emoji} ${s.name}</div>
                   <div class="flex items-baseline justify-between pt-1">
                     <span class="font-mono text-lg font-black text-amber-300">${s.price.toLocaleString()}원</span>
-                    <span class="font-mono text-sm font-bold ${color}">${arrow} ${up ? '+' : ''}${s.pctChange}% ${s.limitTag ? `<span class="ml-1 px-1.5 py-0.5 rounded text-[10px] ${s.limitTag === '상한가' ? 'bg-rose-500/30 text-rose-300' : 'bg-sky-500/30 text-sky-300'}">${s.limitTag}</span>` : ''}</span>
+                    <span class="font-mono text-sm font-bold ${color}">${arrow} ${up ? '+' : ''}${s.pctChange}% </span>
                   </div>
                 </div>
               `;

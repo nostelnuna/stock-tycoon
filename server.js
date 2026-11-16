@@ -414,7 +414,7 @@ const HIDDEN_EVENT_DECK = [
     isHidden: true,
     title: '글로벌 무역 분쟁 전격 타결 및 관세 전면 철폐 선언',
     summary: '예상치 못한 정상회담 합의로 주요국 간 보복 관세가 즉시 철회되었습니다.',
-    impacts: { SEMI: 0.22, AUTO: 0.22, COSM: 0.18, AIRL: 0.15 },
+    impacts: { SEMI: 0.36, AUTO: 0.34, COSM: 0.28, AIRL: 0.25 },
     outcomeNote: '🕵️ [히든 변수 공개] 글로벌 관세 철폐 전격 타결! 수출주 전반이 급등했습니다.',
   },
   {
@@ -423,7 +423,7 @@ const HIDDEN_EVENT_DECK = [
     isHidden: true,
     title: '차세대 고효율 친환경 소재·배터리 혁신 기술 상용화 발표',
     summary: '생산 단가를 절반으로 낮추는 혁신 공정이 전격 공개되며 산업계 판도가 뒤바뀌고 있습니다.',
-    impacts: { CHEM: 0.24, AUTO: 0.18, STEL: 0.12 },
+    impacts: { CHEM: 0.38, AUTO: 0.30, STEL: 0.20 },
     outcomeNote: '🕵️ [히든 변수 공개] 혁신 소재 상용화 발표로 석유화학·자동차·철강이 급등했습니다.',
   },
   {
@@ -432,8 +432,8 @@ const HIDDEN_EVENT_DECK = [
     isHidden: true,
     title: '글로벌 보건당국, 넥스바이오 핵심 신약 긴급사용승인 전격 결정',
     summary: '예정보다 1년 앞당겨진 긴급 승인으로 즉각적인 글로벌 매출 발생이 확정되었습니다.',
-    impacts: { BIOH: 0.28, CONS: 0.08 },
-    outcomeNote: '🕵️ [히든 변수 공개] 넥스바이오 신약 긴급사용승인! 바이오 업종이 상한가 근접 폭등했습니다.',
+    impacts: { BIOH: 0.44, CONS: 0.15 },
+    outcomeNote: '🕵️ [히든 변수 공개] 넥스바이오 신약 긴급사용승인! 바이오 업종이 크게 폭등했습니다.',
   },
   {
     id: 'HD_POS_4',
@@ -441,7 +441,7 @@ const HIDDEN_EVENT_DECK = [
     isHidden: true,
     title: '국제기구·주요국 100조 원 규모 공동 재건 및 관광 진흥 패키지 가동',
     summary: '대규모 평화 재건 사업과 무비자 관광 특구 지정이 동시에 발표되었습니다.',
-    impacts: { CNST: 0.24, AIRL: 0.22, STEL: 0.18, COSM: 0.14 },
+    impacts: { CNST: 0.38, AIRL: 0.35, STEL: 0.28, COSM: 0.22 },
     outcomeNote: '🕵️ [히든 변수 공개] 대규모 재건·관광 패키지 가동으로 건설·항공·철강·화장품이 동반 급등했습니다.',
   },
   {
@@ -450,7 +450,7 @@ const HIDDEN_EVENT_DECK = [
     isHidden: true,
     title: '핵심 해상 물류로 군사 충돌 발발 및 긴급 항로 봉쇄',
     summary: '예고 없는 무력 충돌로 국제 유가가 급등하고 글로벌 물류망이 마비되었습니다.',
-    impacts: { AIRL: -0.26, CHEM: -0.22, AUTO: -0.14, FINC: 0.06 },
+    impacts: { AIRL: -0.42, CHEM: -0.35, AUTO: -0.24, FINC: 0.10 },
     outcomeNote: '🕵️ [히든 변수 공개] 해상 물류로 군사 충돌 발발! 항공·화학·자동차가 급락했습니다.',
   },
   {
@@ -459,7 +459,7 @@ const HIDDEN_EVENT_DECK = [
     isHidden: true,
     title: '글로벌 금융·전산망 대규모 사이버 테러 발생',
     summary: '주요 결제망과 반도체 설계 서버가 동시 공격을 받아 일시 가동 중단 사태가 벌어졌습니다.',
-    impacts: { FINC: -0.24, SEMI: -0.18, CONS: -0.12 },
+    impacts: { FINC: -0.38, SEMI: -0.30, CONS: -0.20 },
     outcomeNote: '🕵️ [히든 변수 공개] 대규모 사이버 테러 발생으로 금융·반도체·소비재가 하락했습니다.',
   },
   {
@@ -468,7 +468,7 @@ const HIDDEN_EVENT_DECK = [
     isHidden: true,
     title: '주요 산업단지 대규모 정전 및 핵심 소재 공장 가동 중단',
     summary: '예기치 못한 전력망 사고로 반도체·철강·화학 라인의 복구에 수 주가 소요될 전망입니다.',
-    impacts: { SEMI: -0.25, STEL: -0.22, CHEM: -0.20 },
+    impacts: { SEMI: -0.40, STEL: -0.35, CHEM: -0.32 },
     outcomeNote: '🕵️ [히든 변수 공개] 산업단지 대형 정전 사태로 반도체·철강·석유화학이 급락했습니다.',
   },
   {
@@ -477,7 +477,7 @@ const HIDDEN_EVENT_DECK = [
     isHidden: true,
     title: '신종 감염병 변이 확산 경보 및 국제선 검역 재강화',
     summary: '각국 국경 통제 강화 조짐으로 여행·면세 수요가 급감하고 비대면·의약품 수요가 급증하고 있습니다.',
-    impacts: { AIRL: -0.28, COSM: -0.22, CONS: 0.16, BIOH: 0.18 },
+    impacts: { AIRL: -0.45, COSM: -0.35, CONS: 0.25, BIOH: 0.30 },
     outcomeNote: '🕵️ [히든 변수 공개] 감염병 변이 경보로 항공·화장품이 급락하고 바이오·소비재가 급등했습니다.',
   },
 ];
@@ -515,7 +515,6 @@ function initStocks() {
       price: item.initialPrice,
       prevPrice: item.initialPrice,
       pctChange: 0,
-      limitTag: null, // '상한가' | '하한가' | null
       history: [item.initialPrice],
     };
   }
@@ -743,9 +742,11 @@ function closeMarketAndSettle() {
 
   const sectorDelta = {};
   const touchedByHard = {};
+  const touchedByHidden = {};
   Object.keys(state.stocks).forEach((code) => {
     sectorDelta[code] = 0;
     touchedByHard[code] = false;
+    touchedByHidden[code] = false;
   });
 
   const logs = [];
@@ -755,33 +756,27 @@ function closeMarketAndSettle() {
       if (sectorDelta[code] !== undefined) {
         sectorDelta[code] += delta;
         if (news.difficulty === 'HARD') touchedByHard[code] = true;
+        if (news.isHidden) touchedByHidden[code] = true;
       }
     }
   }
 
   for (const stock of Object.values(state.stocks)) {
     stock.prevPrice = stock.price;
-    const noiseRange = touchedByHard[stock.code] ? 0.04 : 0.02;
+    const noiseRange = touchedByHidden[stock.code] ? 0.05 : touchedByHard[stock.code] ? 0.04 : 0.02;
     const noise = (Math.random() * 2 - 1) * noiseRange;
     let rawPct = sectorDelta[stock.code] + noise;
 
-    // HARD 뉴스에만 영향받지 않은(EASY만 적용된) 종목은 ±10% 이내로 제한
-    if (!touchedByHard[stock.code] && sectorDelta[stock.code] !== 0) {
-      rawPct = Math.max(-0.10, Math.min(0.10, rawPct));
-    }
-
-    // 하루 상·하한가 최대 ±30% 제한
-    const clampedPct = Math.max(-0.30, Math.min(0.30, rawPct));
-    let newPrice = Math.max(1000, Math.round((stock.price * (1 + clampedPct)) / 100) * 100);
-
-    // 100원 반올림으로 ±30% 초과 방지
-    const maxAllowed = Math.floor((stock.prevPrice * 1.30) / 100) * 100;
-    const minAllowed = Math.max(1000, Math.ceil((stock.prevPrice * 0.70) / 100) * 100);
-    newPrice = Math.min(maxAllowed, Math.max(minAllowed, newPrice));
+    // 난이도별 변동폭 제한:
+    // - EASY만 적용된 종목: ±10% 이내
+    // - HARD 일반 정보 적용 종목: ±30% 이내
+    // - 히든 정보(???) 적용 종목: 최대 ±50% 이내
+    const maxSwing = touchedByHidden[stock.code] ? 0.50 : (!touchedByHard[stock.code] && sectorDelta[stock.code] !== 0) ? 0.10 : 0.30;
+    const clampedPct = Math.max(-maxSwing, Math.min(maxSwing, rawPct));
+    const newPrice = Math.max(1000, Math.round((stock.price * (1 + clampedPct)) / 100) * 100);
 
     stock.price = newPrice;
     stock.pctChange = Number((((newPrice - stock.prevPrice) / stock.prevPrice) * 100).toFixed(1));
-    stock.limitTag = stock.pctChange >= 29.5 ? '상한가' : stock.pctChange <= -29.5 ? '하한가' : null;
     stock.history.push(newPrice);
   }
 

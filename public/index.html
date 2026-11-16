@@ -394,7 +394,7 @@
                   <div class="p-3 rounded-xl bg-slate-900/85 border border-slate-800 space-y-1">
                     <div class="text-xs font-bold text-white">${s.emoji} ${s.name}</div>
                     <div class="font-mono text-sm font-extrabold text-slate-100">${s.price.toLocaleString()}원</div>
-                    <div class="font-mono text-xs font-bold ${badgeColor}">${arrow} ${up ? '+' : ''}${s.pctChange}% ${s.limitTag ? `<span class="ml-1 px-1.5 py-0.5 rounded text-[10px] ${s.limitTag === '상한가' ? 'bg-rose-500/30 text-rose-300' : 'bg-sky-500/30 text-sky-300'}">${s.limitTag}</span>` : ''}</div>
+                    <div class="font-mono text-xs font-bold ${badgeColor}">${arrow} ${up ? '+' : ''}${s.pctChange}% </div>
                   </div>
                 `;
               }).join('')}
